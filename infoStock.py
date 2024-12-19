@@ -14,6 +14,8 @@ MostFollowed_status = []
 
 Prominent_Stocks = []
 Prominent_Stocks_price = []
+Prominent_Stocks_status = []
+
 def get_Info():
     """
     Function to scrape news from BBC and update the global headlines and subtext lists.
@@ -28,8 +30,6 @@ def get_Info():
         stocks_status = soup.find_all('div', class_= 'O7j0Wc')
         ##---
         Stocks_Prominent = soup.find_all('div', class_ = 'sR5uIb D4uc1d')
-        for stock in Stocks_Prominent:
-            Prominent_Stocks_price.append(stock.find('div', class_='s1OkXb').text.strip())
 
         for stock in stocks:
             MostFollowed_scraped_stocks.append(stock.text.strip())
@@ -37,8 +37,17 @@ def get_Info():
         for stock in stocks_status:
             MostFollowed_status.append(stock.text.strip())
 
+        ## ----------
+
+        for stock in Stocks_Prominent:
+            Prominent_Stocks_price.append(stock.find('div', class_='s1OkXb').text.strip())
+
         for stock in Stocks_Prominent: 
-            Prominent_Stocks.append(stock.text.strip())
+            Prominent_Stocks.append(stock.find('div', class_='pKBk1e').text.strip())
+
+        for stock in Stocks_Prominent:
+            Prominent_Stocks_status.append(stock.find('div', class_='JwB6zf').text.strip())
+        print(Prominent_Stocks_status)
 
     except Exception as e:
         print(f"Error occurred during scraping: {e}")
@@ -53,7 +62,8 @@ def get_news():
             "ProminentStocks": [{
                 "Stock": StockName,
                 "Price": StockPrice, 
-            }for StockName, StockPrice in zip(Prominent_Stocks,Prominent_Stocks_price)],
+                "status": StockStatus
+            }for StockName, StockPrice, StockStatus in zip(Prominent_Stocks,Prominent_Stocks_price,Prominent_Stocks_status)],
             "Most-followed": [{
                 "company": MostFollowed,
                 "StockStatus": MostStatus
